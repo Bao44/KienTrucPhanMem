@@ -6,10 +6,10 @@ package vn.edu.iuh.fit;
 
 //import vn.edu.iuh.fit.strategy_Pattern_No_Design_Pattern.ArraySort;
 
-//import vn.edu.iuh.fit.strategy_Pattern.ArraySort;
-//import vn.edu.iuh.fit.strategy_Pattern.BubbleSort;
-//import vn.edu.iuh.fit.strategy_Pattern.MergeSort;
-//import vn.edu.iuh.fit.strategy_Pattern.QuickSort;
+import vn.edu.iuh.fit.strategy_Pattern.ArraySort;
+import vn.edu.iuh.fit.strategy_Pattern.BubbleSort;
+import vn.edu.iuh.fit.strategy_Pattern.MergeSort;
+import vn.edu.iuh.fit.strategy_Pattern.QuickSort;
 
 import vn.edu.iuh.fit.singleton_Pattern.DatabaseConnection;
 
@@ -36,22 +36,22 @@ public class Main {
 //        arraySort.mergeSort();
 //        arraySort.quickSort();
 
-//        int[] arr = {4, 5, 7, 3, 9};
-//        ArraySort arraySort = new ArraySort(arr);
-//
-//        arraySort.setSortStrategy(new MergeSort());
-//        arraySort.sort();
-//
-//        arraySort.setSortStrategy(new QuickSort());
-//        arraySort.sort();
-//
-//        arraySort.setSortStrategy(new BubbleSort());
-//        arraySort.sort();
+        int[] arrInts = {4, 5, 7, 3, 9};
+        ArraySort arraySort = new ArraySort(arrInts);
 
-        DatabaseConnection db1 = DatabaseConnection.getInstance();
-        DatabaseConnection db2 = DatabaseConnection.getInstance();
+        arraySort.setSortStrategy(new MergeSort());
+        arraySort.sort();
 
-        db1.query("SELECT * FROM employees");
-        System.out.println("db1 == db2: " + (db1 == db2)); // Kiểm tra cùng instance
+        arraySort.setSortStrategy(new QuickSort());
+        arraySort.sort();
+
+        arraySort.setSortStrategy(new BubbleSort());
+        arraySort.sort();
+
+//        DatabaseConnection db1 = DatabaseConnection.getInstance();
+//        DatabaseConnection db2 = DatabaseConnection.getInstance();
+//
+//        db1.query("SELECT * FROM employees");
+//        System.out.println("db1 == db2: " + (db1 == db2)); // Kiểm tra cùng instance
     }
 }
