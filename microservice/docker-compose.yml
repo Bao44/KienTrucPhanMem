@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  gateway-service:
+    build: ./gateway-service
+    ports:
+      - "8080:8080"
+
+  payment-service:
+    build: ./payment-service
+    ports:
+      - "8081:8081"
+
+  inventory-service:
+    build: ./inventory-service
+    ports:
+      - "8082:8082"
+
+  shipping-service:
+    build: ./shipping-service
+    ports:
+      - "8083:8083"
