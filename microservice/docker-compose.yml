@@ -1,21 +1,36 @@
-version: "3.8"
 services:
   gateway-service:
-    build: ./gateway-service
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
 
   payment-service:
-    build: ./payment-service
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
 
   inventory-service:
-    build: ./inventory-service
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
     ports:
-      - "8082:8082"
+      - "8082:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
 
   shipping-service:
-    build: ./shipping-service
+    build:
+      context: ./shipping-service
+      dockerfile: Dockerfile
     ports:
-      - "8083:8083"
+      - "8083:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod

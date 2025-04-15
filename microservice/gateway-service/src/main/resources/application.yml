@@ -5,6 +5,14 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: product-service
+          uri: http://localhost:8084 # Điều chỉnh port nếu cần
+          predicates:
+            - Path=/api/products/**
+        - id: order-service
+          uri: http://localhost:8085 # Điều chỉnh port nếu cần
+          predicates:
+            - Path=/api/orders/**
         - id: payment-service
           uri: http://localhost:8081
           predicates:
@@ -17,23 +25,84 @@ spring:
           uri: http://localhost:8083
           predicates:
             - Path=/api/shipping/**
-
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedHeaders:
+              - "Content-Type"
+              - "Authorization"
+            allowedMethods:
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+              - "OPTIONS"
+            maxAge: 3600
 
 resilience4j:
   circuitbreaker:
     instances:
       paymentService:
-        slidingWindowSize: 5
-        minimumNumberOfCalls: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
         failureRateThreshold: 50
-        waitDurationInOpenState: 5s
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+      inventoryService:
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+      shippingService:
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
   retry:
     instances:
       paymentService:
         maxRetryAttempts: 3
-        waitDuration: 2s
+        waitDuration: 500
+      inventoryService:
+        maxRetryAttempts: 3
+        waitDuration: 500
+      shippingService:
+        maxRetryAttempts: 3
+        waitDuration: 500
+  ratelimiter:
+    instances:
+      paymentService:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1000
+        timeoutDuration: 1000
+      inventoryService:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1000
+        timeoutDuration: 1000
+      shippingService:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1000
+        timeoutDuration: 1000
   timelimiter:
     instances:
       paymentService:
-        timeoutDuration: 3s
+        timeoutDuration: 2000
+        cancelRunningFuture: true
+      inventoryService:
+        timeoutDuration: 2000
+        cancelRunningFuture: true
+      shippingService:
+        timeoutDuration: 2000
+        cancelRunningFuture: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, circuitbreakers

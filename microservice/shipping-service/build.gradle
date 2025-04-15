@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.4'
+    id 'org.springframework.boot' version '3.3.5' // Giảm từ 3.4.4 xuống 3.3.5
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -17,14 +17,49 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    resilience4jVersion = '2.2.0'
+    springCloudVersion = '2023.0.3'
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation("org.postgresql:postgresql")
+
+    // Spring Cloud Circuit Breaker với Resilience4j
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j' // Không khai báo phiên bản trực tiếp
+
+    // Resilience4j dependencies - thống nhất phiên bản
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:${resilience4jVersion}"
+    implementation "io.github.resilience4j:resilience4j-circuitbreaker:${resilience4jVersion}"
+    implementation "io.github.resilience4j:resilience4j-retry:${resilience4jVersion}"
+    implementation "io.github.resilience4j:resilience4j-ratelimiter:${resilience4jVersion}"
+    implementation "io.github.resilience4j:resilience4j-timelimiter:${resilience4jVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.postgresql:postgresql'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Ép tất cả các module Resilience4j dùng phiên bản 2.2.0
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'io.github.resilience4j') {
+                details.useVersion resilience4jVersion
+                details.because "Force Resilience4j to use version ${resilience4jVersion}"
+            }
+        }
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {
